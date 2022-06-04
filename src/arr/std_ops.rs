@@ -1,7 +1,7 @@
-use crate::array::Array;
+use crate::arr::Arr;
 use std::ops::*;
 
-impl<T> Neg for Array<T>
+impl<T> Neg for Arr<T>
 where
     T: Neg<Output = T>,
 {
@@ -16,7 +16,7 @@ where
 
 // Add/Sub/Mul/Div <T> //
 
-impl<T> Add<T> for Array<T>
+impl<T> Add<T> for Arr<T>
 where
     T: Add<T, Output = T> + Copy,
 {
@@ -29,7 +29,7 @@ where
     }
 }
 
-impl<T> Sub<T> for Array<T>
+impl<T> Sub<T> for Arr<T>
 where
     T: Sub<T, Output = T> + Copy,
 {
@@ -42,7 +42,7 @@ where
     }
 }
 
-impl<T> Mul<T> for Array<T>
+impl<T> Mul<T> for Arr<T>
 where
     T: Mul<T, Output = T> + Copy,
 {
@@ -55,7 +55,7 @@ where
     }
 }
 
-impl<T> Div<T> for Array<T>
+impl<T> Div<T> for Arr<T>
 where
     T: Div<T, Output = T> + Copy,
 {
@@ -70,7 +70,7 @@ where
 
 // Add/Sub/Mul/Div Assign<T> //
 
-impl<T> AddAssign<T> for Array<T>
+impl<T> AddAssign<T> for Arr<T>
 where
     T: AddAssign<T> + Copy,
 {
@@ -79,7 +79,7 @@ where
     }
 }
 
-impl<T> SubAssign<T> for Array<T>
+impl<T> SubAssign<T> for Arr<T>
 where
     T: SubAssign<T> + Copy,
 {
@@ -88,7 +88,7 @@ where
     }
 }
 
-impl<T> MulAssign<T> for Array<T>
+impl<T> MulAssign<T> for Arr<T>
 where
     T: MulAssign<T> + Copy,
 {
@@ -97,7 +97,7 @@ where
     }
 }
 
-impl<T> DivAssign<T> for Array<T>
+impl<T> DivAssign<T> for Arr<T>
 where
     T: DivAssign<T> + Copy,
 {
@@ -108,7 +108,7 @@ where
 
 // Add/Sub/Mul/Div Array<T> //
 
-impl<T> Add<Array<T>> for Array<T>
+impl<T> Add<Arr<T>> for Arr<T>
 where
     T: Add<T, Output = T> + Copy,
 {
@@ -128,7 +128,7 @@ where
     }
 }
 
-impl<T> Sub<Array<T>> for Array<T>
+impl<T> Sub<Arr<T>> for Arr<T>
 where
     T: Sub<T, Output = T> + Copy,
 {
@@ -148,7 +148,7 @@ where
     }
 }
 
-impl<T> Mul<Array<T>> for Array<T>
+impl<T> Mul<Arr<T>> for Arr<T>
 where
     T: Mul<T, Output = T> + Copy,
 {
@@ -168,7 +168,7 @@ where
     }
 }
 
-impl<T> Div<Array<T>> for Array<T>
+impl<T> Div<Arr<T>> for Arr<T>
 where
     T: Div<T, Output = T> + Copy,
 {
@@ -190,11 +190,11 @@ where
 
 // Add/Sub/Mul/Div Assign Array<T> //
 
-impl<T> AddAssign<Array<T>> for Array<T>
+impl<T> AddAssign<Arr<T>> for Arr<T>
 where
     T: AddAssign<T> + Copy,
 {
-    fn add_assign(&mut self, rhs: Array<T>) {
+    fn add_assign(&mut self, rhs: Arr<T>) {
         assert_eq!(self.data.len(), rhs.data.len());
         self.data
             .iter_mut()
@@ -203,11 +203,11 @@ where
     }
 }
 
-impl<T> SubAssign<Array<T>> for Array<T>
+impl<T> SubAssign<Arr<T>> for Arr<T>
 where
     T: SubAssign<T> + Copy,
 {
-    fn sub_assign(&mut self, rhs: Array<T>) {
+    fn sub_assign(&mut self, rhs: Arr<T>) {
         assert_eq!(self.data.len(), rhs.data.len());
         self.data
             .iter_mut()
@@ -216,11 +216,11 @@ where
     }
 }
 
-impl<T> MulAssign<Array<T>> for Array<T>
+impl<T> MulAssign<Arr<T>> for Arr<T>
 where
     T: MulAssign<T> + Copy,
 {
-    fn mul_assign(&mut self, rhs: Array<T>) {
+    fn mul_assign(&mut self, rhs: Arr<T>) {
         assert_eq!(self.data.len(), rhs.data.len());
         self.data
             .iter_mut()
@@ -229,11 +229,11 @@ where
     }
 }
 
-impl<T> DivAssign<Array<T>> for Array<T>
+impl<T> DivAssign<Arr<T>> for Arr<T>
 where
     T: DivAssign<T> + Copy,
 {
-    fn div_assign(&mut self, rhs: Array<T>) {
+    fn div_assign(&mut self, rhs: Arr<T>) {
         assert_eq!(self.data.len(), rhs.data.len());
         self.data
             .iter_mut()
@@ -244,11 +244,11 @@ where
 
 // Add/Sub/Mul/Div Assign &Array //
 
-impl<T> AddAssign<&Array<T>> for Array<T>
+impl<T> AddAssign<&Arr<T>> for Arr<T>
 where
     T: AddAssign<T> + Copy,
 {
-    fn add_assign(&mut self, rhs: &Array<T>) {
+    fn add_assign(&mut self, rhs: &Arr<T>) {
         assert_eq!(self.data.len(), rhs.data.len());
         self.data
             .iter_mut()
@@ -257,11 +257,11 @@ where
     }
 }
 
-impl<T> SubAssign<&Array<T>> for Array<T>
+impl<T> SubAssign<&Arr<T>> for Arr<T>
 where
     T: SubAssign<T> + Copy,
 {
-    fn sub_assign(&mut self, rhs: &Array<T>) {
+    fn sub_assign(&mut self, rhs: &Arr<T>) {
         assert_eq!(self.data.len(), rhs.data.len());
         self.data
             .iter_mut()
@@ -270,11 +270,11 @@ where
     }
 }
 
-impl<T> MulAssign<&Array<T>> for Array<T>
+impl<T> MulAssign<&Arr<T>> for Arr<T>
 where
     T: MulAssign<T> + Copy,
 {
-    fn mul_assign(&mut self, rhs: &Array<T>) {
+    fn mul_assign(&mut self, rhs: &Arr<T>) {
         assert_eq!(self.data.len(), rhs.data.len());
         self.data
             .iter_mut()
@@ -283,11 +283,11 @@ where
     }
 }
 
-impl<T> DivAssign<&Array<T>> for Array<T>
+impl<T> DivAssign<&Arr<T>> for Arr<T>
 where
     T: DivAssign<T> + Copy,
 {
-    fn div_assign(&mut self, rhs: &Array<T>) {
+    fn div_assign(&mut self, rhs: &Arr<T>) {
         assert_eq!(self.data.len(), rhs.data.len());
         self.data
             .iter_mut()

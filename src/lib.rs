@@ -1,5 +1,5 @@
-pub mod array;
-pub mod matrix;
+pub mod arr;
+pub mod mat;
 pub mod traits;
 
 mod densetools;

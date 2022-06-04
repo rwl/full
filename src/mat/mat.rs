@@ -3,14 +3,14 @@ use num_traits::{One, Zero};
 use std::fmt::{Display, Formatter};
 use std::ops::{Add, AddAssign, Mul};
 
-pub struct Matrix<T> {
+pub struct Mat<T> {
     pub(crate) rows: usize,
     pub(crate) cols: usize,
     // Matrix element values stored in row-major order (C-style).
     pub(crate) data: Vec<T>,
 }
 
-impl<T> Matrix<T> {
+impl<T> Mat<T> {
     pub fn zeros(rows: usize, cols: usize) -> Self
     where
         T: Clone + Zero,
@@ -65,7 +65,7 @@ impl<T> Matrix<T> {
     }
 }
 
-impl<T> Display for Matrix<T>
+impl<T> Display for Mat<T>
 where
     T: Copy + Display,
 {

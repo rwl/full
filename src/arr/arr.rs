@@ -5,11 +5,11 @@ use std::fmt::{Display, Formatter};
 use std::ops::{AddAssign, Deref, DerefMut, Div, Sub};
 
 #[derive(Debug)]
-pub struct Array<T> {
+pub struct Arr<T> {
     pub(crate) data: Vec<T>,
 }
 
-impl<T> Array<T>
+impl<T> Arr<T>
 where
     T: Clone + Copy + Zero + One,
 {
@@ -54,7 +54,7 @@ where
     }
 }
 
-impl<T> Deref for Array<T> {
+impl<T> Deref for Arr<T> {
     type Target = Vec<T>;
 
     fn deref(&self) -> &Self::Target {
@@ -62,13 +62,13 @@ impl<T> Deref for Array<T> {
     }
 }
 
-impl<T> DerefMut for Array<T> {
+impl<T> DerefMut for Arr<T> {
     fn deref_mut(&mut self) -> &mut Self::Target {
         &mut self.data
     }
 }
 
-impl<T> Display for Array<T>
+impl<T> Display for Arr<T>
 where
     T: Display + Copy,
 {

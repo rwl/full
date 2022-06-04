@@ -1,9 +1,9 @@
-use crate::array::Array;
+use crate::arr::Arr;
 
 #[test]
 fn test_array() {
-    let mut a = Array::<f64>::ones(6);
-    let mut b = Array::<f64>::ones(6);
+    let mut a = Arr::<f64>::ones(6);
+    let mut b = Arr::<f64>::ones(6);
 
     a += 1.0;
     b *= 2.0;

@@ -1,34 +1,34 @@
-use crate::matrix::Matrix;
+use crate::mat::Mat;
 use crate::traits::Complex;
 
-pub trait CMatrix<C, F> {
-    fn real(&self) -> Matrix<F>;
-    fn imag(&self) -> Matrix<F>;
-    fn conj(&self) -> Matrix<C>;
+pub trait CMat<C, F> {
+    fn real(&self) -> Mat<F>;
+    fn imag(&self) -> Mat<F>;
+    fn conj(&self) -> Mat<C>;
 }
 
-impl<C> CMatrix<C, f64> for Matrix<C>
+impl<C> CMat<C, f64> for Mat<C>
 where
     C: Complex<f64>,
 {
-    fn real(&self) -> Matrix<f64> {
-        Matrix {
+    fn real(&self) -> Mat<f64> {
+        Mat {
             rows: self.rows,
             cols: self.cols,
             data: self.data.iter().map(|c| c.real()).collect(),
         }
     }
 
-    fn imag(&self) -> Matrix<f64> {
-        Matrix {
+    fn imag(&self) -> Mat<f64> {
+        Mat {
             rows: self.rows,
             cols: self.cols,
             data: self.data.iter().map(|c| c.imag()).collect(),
         }
     }
 
-    fn conj(&self) -> Matrix<C> {
-        Matrix {
+    fn conj(&self) -> Mat<C> {
+        Mat {
             rows: self.rows,
             cols: self.cols,
             data: self.data.iter().map(|c| c.conj()).collect(),

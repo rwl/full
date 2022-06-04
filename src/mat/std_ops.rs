@@ -1,7 +1,7 @@
-use crate::matrix::Matrix;
+use crate::mat::Mat;
 use std::ops::*;
 
-impl<T> Neg for Matrix<T>
+impl<T> Neg for Mat<T>
 where
     T: Neg<Output = T>,
 {
@@ -19,7 +19,7 @@ where
 
 // Add/Sub/Mul/Div <T> //
 
-impl<T> Add<T> for Matrix<T>
+impl<T> Add<T> for Mat<T>
 where
     T: Add<T, Output = T> + Copy,
 {
@@ -34,7 +34,7 @@ where
     }
 }
 
-impl<T> Sub<T> for Matrix<T>
+impl<T> Sub<T> for Mat<T>
 where
     T: Sub<T, Output = T> + Copy,
 {
@@ -49,7 +49,7 @@ where
     }
 }
 
-impl<T> Mul<T> for Matrix<T>
+impl<T> Mul<T> for Mat<T>
 where
     T: Mul<T, Output = T> + Copy,
 {
@@ -64,7 +64,7 @@ where
     }
 }
 
-impl<T> Div<T> for Matrix<T>
+impl<T> Div<T> for Mat<T>
 where
     T: Div<T, Output = T> + Copy,
 {
@@ -81,7 +81,7 @@ where
 
 // Add/Sub/Mul/Div Assign<T> //
 
-impl<T> AddAssign<T> for Matrix<T>
+impl<T> AddAssign<T> for Mat<T>
 where
     T: AddAssign<T> + Copy,
 {
@@ -90,7 +90,7 @@ where
     }
 }
 
-impl<T> SubAssign<T> for Matrix<T>
+impl<T> SubAssign<T> for Mat<T>
 where
     T: SubAssign<T> + Copy,
 {
@@ -99,7 +99,7 @@ where
     }
 }
 
-impl<T> MulAssign<T> for Matrix<T>
+impl<T> MulAssign<T> for Mat<T>
 where
     T: MulAssign<T> + Copy,
 {
@@ -108,7 +108,7 @@ where
     }
 }
 
-impl<T> DivAssign<T> for Matrix<T>
+impl<T> DivAssign<T> for Mat<T>
 where
     T: DivAssign<T> + Copy,
 {
@@ -117,9 +117,9 @@ where
     }
 }
 
-// Add/Sub/Mul/Div Matrix<T> //
+// Add/Sub/Mul/Div Mat<T> //
 
-impl<T> Add<Matrix<T>> for Matrix<T>
+impl<T> Add<Mat<T>> for Mat<T>
 where
     T: Add<T, Output = T> + Copy,
 {
@@ -142,7 +142,7 @@ where
     }
 }
 
-impl<T> Sub<Matrix<T>> for Matrix<T>
+impl<T> Sub<Mat<T>> for Mat<T>
 where
     T: Sub<T, Output = T> + Copy,
 {
@@ -165,7 +165,7 @@ where
     }
 }
 
-impl<T> Mul<Matrix<T>> for Matrix<T>
+impl<T> Mul<Mat<T>> for Mat<T>
 where
     T: Mul<T, Output = T> + Copy,
 {
@@ -188,7 +188,7 @@ where
     }
 }
 
-impl<T> Div<Matrix<T>> for Matrix<T>
+impl<T> Div<Mat<T>> for Mat<T>
 where
     T: Div<T, Output = T> + Copy,
 {
@@ -211,13 +211,13 @@ where
     }
 }
 
-// Add/Sub/Mul/Div Assign Matrix<T> //
+// Add/Sub/Mul/Div Assign Mat<T> //
 
-impl<T> AddAssign<Matrix<T>> for Matrix<T>
+impl<T> AddAssign<Mat<T>> for Mat<T>
 where
     T: AddAssign<T> + Copy,
 {
-    fn add_assign(&mut self, rhs: Matrix<T>) {
+    fn add_assign(&mut self, rhs: Mat<T>) {
         assert_eq!(self.rows, rhs.rows);
         assert_eq!(self.cols, rhs.cols);
 
@@ -228,11 +228,11 @@ where
     }
 }
 
-impl<T> SubAssign<Matrix<T>> for Matrix<T>
+impl<T> SubAssign<Mat<T>> for Mat<T>
 where
     T: SubAssign<T> + Copy,
 {
-    fn sub_assign(&mut self, rhs: Matrix<T>) {
+    fn sub_assign(&mut self, rhs: Mat<T>) {
         assert_eq!(self.rows, rhs.rows);
         assert_eq!(self.cols, rhs.cols);
 
@@ -243,11 +243,11 @@ where
     }
 }
 
-impl<T> MulAssign<Matrix<T>> for Matrix<T>
+impl<T> MulAssign<Mat<T>> for Mat<T>
 where
     T: MulAssign<T> + Copy,
 {
-    fn mul_assign(&mut self, rhs: Matrix<T>) {
+    fn mul_assign(&mut self, rhs: Mat<T>) {
         assert_eq!(self.rows, rhs.rows);
         assert_eq!(self.cols, rhs.cols);
 
@@ -258,11 +258,11 @@ where
     }
 }
 
-impl<T> DivAssign<Matrix<T>> for Matrix<T>
+impl<T> DivAssign<Mat<T>> for Mat<T>
 where
     T: DivAssign<T> + Copy,
 {
-    fn div_assign(&mut self, rhs: Matrix<T>) {
+    fn div_assign(&mut self, rhs: Mat<T>) {
         assert_eq!(self.rows, rhs.rows);
         assert_eq!(self.cols, rhs.cols);
 
