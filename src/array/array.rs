@@ -1,33 +1,56 @@
 use crate::densetools::{ones, to_string, zeros};
-use num_traits::{One, Zero};
+use crate::slice::{all, any, arange, find, range};
+use num_traits::{FromPrimitive, One, ToPrimitive, Zero};
 use std::fmt::{Display, Formatter};
-use std::ops::{Deref, DerefMut};
+use std::ops::{AddAssign, Deref, DerefMut, Div, Sub};
 
 #[derive(Debug)]
 pub struct Array<T> {
     pub(crate) data: Vec<T>,
 }
 
-impl<T> Array<T> {
-    pub fn zeros(n: usize) -> Self
-    where
-        T: Clone + Zero,
-    {
+impl<T> Array<T>
+where
+    T: Clone + Copy + Zero + One,
+{
+    pub fn zeros(n: usize) -> Self {
         Self { data: zeros(1, n) }
     }
 
-    pub fn ones(n: usize) -> Self
-    where
-        T: Clone + One,
-    {
+    pub fn ones(n: usize) -> Self {
         Self { data: ones(1, n) }
     }
 
-    pub fn data(&self) -> &[T]
+    pub fn range(stop: usize) -> Self
     where
-        T: Clone,
+        T: FromPrimitive,
     {
+        Self { data: range(stop) }
+    }
+    pub fn arange(start: T, stop: T, step: T) -> Self
+    where
+        T: Sub<Output = T> + Div<Output = T> + ToPrimitive + PartialOrd + AddAssign,
+    {
+        Self {
+            data: arange(start, stop, step),
+        }
+    }
+
+    pub fn data(&self) -> &[T] {
         &self.data
+    }
+
+    pub fn find<U>(&self) -> Vec<U>
+    where
+        U: FromPrimitive,
+    {
+        find(&self.data)
+    }
+    pub fn any(&self) -> bool {
+        any(&self.data)
+    }
+    pub fn all(&self) -> bool {
+        all(&self.data)
     }
 }
 

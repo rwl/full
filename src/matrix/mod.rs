@@ -1,6 +1,8 @@
+mod cmatrix;
 mod matrix;
+mod std_ops;
+
 #[cfg(test)]
 mod matrix_test;
-mod std_ops;
 
 pub use matrix::*;

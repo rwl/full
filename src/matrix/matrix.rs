@@ -1,6 +1,7 @@
-use crate::densetools::{identity, ones, to_string, zeros};
+use crate::densetools::{identity, mat_mat, mat_vec, ones, to_string, zeros};
 use num_traits::{One, Zero};
 use std::fmt::{Display, Formatter};
+use std::ops::{Add, AddAssign, Mul};
 
 pub struct Matrix<T> {
     pub(crate) rows: usize,
@@ -40,6 +41,26 @@ impl<T> Matrix<T> {
             rows: n,
             cols: n,
             data: identity(n),
+        }
+    }
+
+    pub fn mat_vec(&self, b: &[T]) -> Vec<T>
+    where
+        T: Mul<Output = T> + Add<Output = T> + Zero + Copy,
+    {
+        mat_vec(self.rows, self.cols, &self.data, b, true)
+    }
+
+    pub fn mat_mat(&self, b: &Self) -> Self
+    where
+        T: Mul<Output = T> + AddAssign + Zero + Copy,
+    {
+        Self {
+            rows: self.rows,
+            cols: b.cols,
+            data: mat_mat(
+                self.rows, self.cols, &self.data, b.rows, b.cols, &b.data, true,
+            ),
         }
     }
 }
