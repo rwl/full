@@ -45,3 +45,22 @@ where
         num_complex::Complex::arg(*self)
     }
 }
+
+pub trait Norm<F> {
+    fn norm(&self) -> F;
+}
+
+impl Norm<f64> for f64 {
+    fn norm(&self) -> f64 {
+        f64::abs(*self)
+    }
+}
+
+impl<F> Norm<F> for num_complex::Complex<F>
+where
+    F: Float,
+{
+    fn norm(&self) -> F {
+        num_complex::Complex::norm(*self)
+    }
+}

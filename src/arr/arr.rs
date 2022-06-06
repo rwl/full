@@ -1,10 +1,10 @@
 use crate::densetools::{ones, to_string, zeros};
-use crate::slice::{all, any, arange, find, range};
+use crate::slice::{all, any, arange, find, range, select};
 use num_traits::{FromPrimitive, One, ToPrimitive, Zero};
 use std::fmt::{Display, Formatter};
 use std::ops::{AddAssign, Deref, DerefMut, Div, Sub};
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct Arr<T> {
     pub(crate) data: Vec<T>,
 }
@@ -13,6 +13,14 @@ impl<T> Arr<T>
 where
     T: Clone + Copy + Zero + One,
 {
+    pub fn new() -> Self {
+        Self { data: Vec::new() }
+    }
+
+    pub fn with_vec(data: Vec<T>) -> Self {
+        Self { data }
+    }
+
     pub fn zeros(n: usize) -> Self {
         Self { data: zeros(1, n) }
     }
@@ -36,6 +44,12 @@ where
         }
     }
 
+    pub fn concat(a: &[T], b: &[T]) -> Self {
+        Self {
+            data: [a, b].concat(),
+        }
+    }
+
     pub fn data(&self) -> &[T] {
         &self.data
     }
@@ -51,6 +65,12 @@ where
     }
     pub fn all(&self) -> bool {
         all(&self.data)
+    }
+
+    pub fn select(&self, ix: &[usize]) -> Arr<T> {
+        Arr {
+            data: select(&self.data, ix),
+        }
     }
 }
 

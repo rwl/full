@@ -1,3 +1,5 @@
+use crate::traits::Norm;
+use num_traits::bounds::Bounded;
 use num_traits::{FromPrimitive, One, ToPrimitive, Zero};
 use std::ops::{Add, AddAssign, Div, Mul, Sub};
 
@@ -314,3 +316,25 @@ where
     (0..).zip(&ix).for_each(|(i, &j)| a.swap(i, j));
     ix
 }
+
+/// Computes the infinity norm: `max(abs(a))`
+pub fn norm_inf<N: Norm<T>, T>(a: &[N]) -> T
+where
+    T: Bounded + PartialOrd,
+{
+    let mut max = T::min_value();
+    for i in 0..a.len() {
+        let absvi = a[i].norm();
+        if absvi > max {
+            max = absvi
+        }
+    }
+    max
+}
+
+// pub fn norm_inf(a: ArrayView1<f64>) -> f64 {
+//     a.iter()
+//         .max_by(|&a, &b| a.partial_cmp(b).unwrap())
+//         .unwrap()
+//         .abs()
+// }

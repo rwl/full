@@ -1,6 +1,7 @@
 mod arr;
 mod carr;
-mod std_ops;
+
+pub mod std_ops;
 
 #[cfg(test)]
 mod arr_test;
