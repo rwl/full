@@ -1,7 +1,7 @@
-use crate::traits::Norm;
+use crate::traits::{IsNaN, Norm, Sqrt};
 use num_traits::bounds::Bounded;
-use num_traits::{FromPrimitive, One, ToPrimitive, Zero};
-use std::ops::{Add, AddAssign, Div, Mul, Sub};
+use num_traits::{FromPrimitive, One, Pow, ToPrimitive, Zero};
+use std::ops::{Add, AddAssign, Div, DivAssign, Mul, MulAssign, Sub};
 
 /// Returns a vector with the indexes of the nonzero elements of `a`.
 pub fn find<T, U>(a: &[T]) -> Vec<U>
@@ -260,7 +260,7 @@ where
     U: One + Zero,
 {
     a.iter()
-        .map(|v| if v.is_zero() { U::one() } else { U::zero() })
+        .map(|v| if v.is_zero() { U::zero() } else { U::one() })
         .collect()
 }
 
@@ -290,7 +290,7 @@ where
 }
 
 /// Computes the dot-product of `a` and `b`.
-pub fn dot_product<T>(a: &[T], b: &[T]) -> T
+pub fn dot<T>(a: &[T], b: &[T]) -> T
 where
     T: Mul<Output = T> + Add<Output = T> + Zero + Copy,
 {
@@ -306,14 +306,18 @@ where
 /// returns the new indexes of the elements.
 pub fn argsort<T>(a: &mut [T], reverse: bool) -> Vec<usize>
 where
-    T: Ord + Copy,
+    T: PartialOrd + Copy,
 {
+    let a0 = a.to_vec(); // FIXME: avoid copy
     let mut ix: Vec<usize> = (0..a.len()).collect();
-    ix.sort_by_key(|&i| a[i]);
+    // ix.sort_by_key(|&i| a[i]);
+    ix.sort_unstable_by(|&i, &j| a[i].partial_cmp(&a[j]).unwrap());
     if reverse {
         ix.reverse()
     }
-    (0..).zip(&ix).for_each(|(i, &j)| a.swap(i, j));
+    for (i, &j) in ix.iter().enumerate() {
+        a[i] = a0[j];
+    }
     ix
 }
 
@@ -338,3 +342,202 @@ where
 //         .unwrap()
 //         .abs()
 // }
+
+/// Returns the index of the maximum value of `a`.
+pub fn argmax<T>(a: &[T]) -> usize
+where
+    T: Bounded + PartialOrd + Copy,
+{
+    assert_ne!(a.len(), 0);
+
+    let mut max = T::max_value();
+    let mut ix = 0;
+    for (i, &v) in a.iter().enumerate() {
+        if v > max {
+            max = v;
+            ix = i;
+        }
+    }
+    ix
+}
+
+/// Sums the values of `a`.
+pub fn sum<T>(a: &[T]) -> T
+where
+    T: Zero + Copy + AddAssign,
+{
+    assert_ne!(a.len(), 0);
+    let mut sum = T::zero();
+    for &v in a {
+        sum += v;
+    }
+    sum
+}
+
+/// Returns the mean of `a`.
+pub fn mean<T>(a: &[T]) -> T
+where
+    T: Zero + Copy + AddAssign + Div<Output = T> + FromPrimitive,
+{
+    assert_ne!(a.len(), 0);
+    // let n = a.len();
+    // if n == 0 {
+    // 	return 0
+    // }
+    sum(a) / T::from_usize(a.len()).unwrap()
+}
+
+/// Returns the standard deviation of `a` defined as: `Sqrt(Mean((x - Mean(x))^2))`
+pub fn std<T>(a: &[T]) -> T
+where
+    T: Zero
+        + Copy
+        + AddAssign
+        + Div<Output = T>
+        + Sqrt
+        + FromPrimitive
+        + Pow<usize, Output = T>
+        + Sub<Output = T>,
+{
+    let mean = mean(a);
+    let mut sum = T::zero();
+    for &v in a {
+        sum += T::pow(v - mean, 2);
+    }
+    let variance = sum / T::from_usize(a.len()).unwrap();
+    T::sqrt(&variance)
+}
+
+/// Returns an array with values linearly spaced
+/// between start and stop (optionally inclusively).
+pub fn linspace<T>(start: T, stop: T, num: usize, inclusive: bool) -> Vec<T>
+where
+    T: Zero
+        + FromPrimitive
+        + Copy
+        + Sub<Output = T>
+        + Div<Output = T>
+        + PartialEq
+        + DivAssign
+        + MulAssign
+        + AddAssign
+        + One,
+{
+    let div = if inclusive { num - 1 } else { num };
+    let div = T::from_usize(div).unwrap();
+
+    // let mut y: Vec<T> = (0..num).map(|i| T::from_usize(i).unwrap()).collect();
+    let mut y = vec![T::zero(); num];
+    for i in 0..num {
+        y[i] = T::from_usize(i).unwrap()
+    }
+    // let mut y = Arr::range(num);
+
+    let delta = stop - start;
+    if num > 1 {
+        let step = delta / div;
+        if step == T::zero() {
+            y.iter_mut().for_each(|v| *v /= div);
+            y.iter_mut().for_each(|v| *v *= delta);
+        } else {
+            y.iter_mut().for_each(|v| *v *= step);
+        }
+    } else {
+        y.iter_mut().for_each(|v| *v *= delta);
+    }
+
+    y.iter_mut().for_each(|v| *v += start);
+
+    if inclusive && num > 1 {
+        y[num - 1] = stop
+    }
+
+    y
+}
+
+/// Returns a vector with the discrete difference of `a`.
+/// Length of result is 1 less than length of `a`.
+pub fn diff<T>(a: &[T]) -> Vec<T>
+where
+    T: Zero + Copy + Sub<Output = T>,
+{
+    assert_ne!(a.len(), 0);
+    let n = a.len();
+    if n == 1 {
+        return vec![];
+    }
+
+    let mut b = vec![T::zero(); n - 1];
+    for i in 1..n {
+        b[i - 1] = a[i] - a[i - 1];
+    }
+    b
+}
+
+/// Returns the 2-norm (Euclidean) of `a`.
+pub fn norm<T>(a: &[T]) -> T
+where
+    T: Zero + Copy + Sqrt + Mul<Output = T> + AddAssign,
+{
+    let mut sqsum = T::zero();
+    for i in 0..a.len() {
+        sqsum += a[i] * a[i];
+    }
+    T::sqrt(&sqsum)
+}
+
+/// Returns the maximum value of `a`.
+pub fn max<T>(a: &[T]) -> T
+where
+    T: Bounded + PartialOrd + Copy,
+{
+    // assert_ne!(self.len(), 0);
+    //
+    // let mut v = T::min_value();
+    // for &x in &self.data {
+    //     if x > v {
+    //         v = x;
+    //     }
+    // }
+    // v
+
+    a.iter()
+        .map(|&v| v)
+        .max_by(|&a, b| a.partial_cmp(b).unwrap())
+        .unwrap()
+}
+
+/// Returns the minimum value of `a`.
+pub fn min<T>(a: &[T]) -> T
+where
+    T: Bounded + PartialOrd + Copy,
+{
+    // assert_ne!(self.len(), 0);
+    //
+    // let mut v = T::max_value();
+    // for &x in &self.data {
+    //     if x < v {
+    //         v = x;
+    //     }
+    // }
+    // v
+
+    a.iter()
+        .map(|&v| v)
+        .min_by(|&a, b| a.partial_cmp(b).unwrap())
+        .unwrap()
+}
+
+/// Returns an integer array with 1s where `T::is_nan(self[i])`.
+pub fn is_nan<T>(a: &[T]) -> Vec<usize>
+where
+    T: IsNaN,
+{
+    let mut b = vec![0; a.len()];
+    for i in 0..a.len() {
+        if T::is_nan(&a[i]) {
+            b[i] = 1;
+        }
+    }
+    b
+}

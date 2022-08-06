@@ -1,4 +1,4 @@
-use crate::slice::dot_product;
+use crate::slice::dot;
 use num_traits::{One, Zero};
 use std::fmt::Display;
 use std::ops::{Add, AddAssign, Mul};
@@ -18,6 +18,18 @@ where
     T: Copy,
 {
     a_x[ix(n_row, n_col, row, col, row_major)]
+}
+
+#[inline]
+pub fn get_ref<T>(
+    n_row: usize,
+    n_col: usize,
+    a_x: &[T],
+    row: usize,
+    col: usize,
+    row_major: bool,
+) -> &T {
+    &a_x[ix(n_row, n_col, row, col, row_major)]
 }
 
 #[inline]
@@ -67,7 +79,7 @@ where
 
     let mut y = Vec::with_capacity(b.len());
     for i in 0..n_row {
-        y.push(dot_product(&a_x[ix(n_row, n_col, i, 0, row_major)..], b))
+        y.push(dot(&a_x[ix(n_row, n_col, i, 0, row_major)..], b))
     }
     y
 }

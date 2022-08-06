@@ -16,6 +16,7 @@ where
             rows: self.rows,
             cols: self.cols,
             data: self.data.iter().map(|c| c.real()).collect(),
+            col_major: self.col_major,
         }
     }
 
@@ -24,6 +25,7 @@ where
             rows: self.rows,
             cols: self.cols,
             data: self.data.iter().map(|c| c.imag()).collect(),
+            col_major: self.col_major,
         }
     }
 
@@ -32,6 +34,7 @@ where
             rows: self.rows,
             cols: self.cols,
             data: self.data.iter().map(|c| c.conj()).collect(),
+            col_major: self.col_major,
         }
     }
 }

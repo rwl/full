@@ -15,7 +15,48 @@ where
     }
 }
 
+impl<T> Neg for &Arr<T>
+where
+    T: Neg<Output = T> + Copy,
+{
+    type Output = Arr<T>;
+
+    fn neg(self) -> Self::Output {
+        Self::Output {
+            data: self.data.iter().map(|&a| -a).collect(),
+        }
+    }
+}
+
 // T Add/Sub/Mul/Div //
+
+#[opimps::impl_ops_lprim(Add)]
+fn add(self: f64, rhs: Arr<f64>) -> Arr<f64> {
+    Arr {
+        data: rhs.data.iter().map(|&a| self + a).collect(),
+    }
+}
+
+#[opimps::impl_ops_lprim(Add)]
+fn add(self: Complex64, rhs: Arr<Complex64>) -> Arr<Complex64> {
+    Arr {
+        data: rhs.data.iter().map(|&a| self + a).collect(),
+    }
+}
+
+#[opimps::impl_ops_lprim(Sub)]
+fn sub(self: f64, rhs: Arr<f64>) -> Arr<f64> {
+    Arr {
+        data: rhs.data.iter().map(|&a| self - a).collect(),
+    }
+}
+
+#[opimps::impl_ops_lprim(Sub)]
+fn sub(self: Complex64, rhs: Arr<Complex64>) -> Arr<Complex64> {
+    Arr {
+        data: rhs.data.iter().map(|&a| self - a).collect(),
+    }
+}
 
 #[opimps::impl_ops_lprim(Mul)]
 fn mul(self: f64, rhs: Arr<f64>) -> Arr<f64> {
@@ -30,6 +71,22 @@ fn mul(self: Complex64, rhs: Arr<Complex64>) -> Arr<Complex64> {
         data: rhs.data.iter().map(|&a| self * a).collect(),
     }
 }
+
+#[opimps::impl_ops_lprim(Div)]
+fn div(self: f64, rhs: Arr<f64>) -> Arr<f64> {
+    Arr {
+        data: rhs.data.iter().map(|&a| self / a).collect(),
+    }
+}
+
+#[opimps::impl_ops_lprim(Div)]
+fn div(self: Complex64, rhs: Arr<Complex64>) -> Arr<Complex64> {
+    Arr {
+        data: rhs.data.iter().map(|&a| self / a).collect(),
+    }
+}
+
+// TODO: 32bit
 
 // Add/Sub/Mul/Div T //
 

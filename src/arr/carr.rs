@@ -118,3 +118,23 @@ where
         Arr { data }
     }
 }
+
+pub fn conj<F, C>(a: &[C]) -> Arr<C>
+where
+    F: Float,
+    C: Complex<F>,
+{
+    Arr {
+        data: a.iter().map(|c| c.conj()).collect(),
+    }
+}
+
+pub fn pow<F, C>(a: &[C], r: i32) -> Arr<C>
+where
+    F: Float,
+    C: Complex<F>,
+{
+    Arr {
+        data: a.iter().map(|c| c.pow(r)).collect(),
+    }
+}

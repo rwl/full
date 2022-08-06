@@ -13,6 +13,7 @@ where
             cols: self.cols,
             // data: self.into_iter().map(|a| -a).collect(),
             data: self.data.into_iter().map(|a| -a).collect(),
+            col_major: self.col_major,
         }
     }
 }
@@ -30,6 +31,7 @@ where
             rows: self.rows,
             cols: self.cols,
             data: self.data.into_iter().map(|a| a + rhs).collect(),
+            col_major: self.col_major,
         }
     }
 }
@@ -45,6 +47,7 @@ where
             rows: self.rows,
             cols: self.cols,
             data: self.data.into_iter().map(|a| a - rhs).collect(),
+            col_major: self.col_major,
         }
     }
 }
@@ -60,6 +63,7 @@ where
             rows: self.rows,
             cols: self.cols,
             data: self.data.into_iter().map(|a| a * rhs).collect(),
+            col_major: self.col_major,
         }
     }
 }
@@ -75,6 +79,7 @@ where
             rows: self.rows,
             cols: self.cols,
             data: self.data.into_iter().map(|a| a / rhs).collect(),
+            col_major: self.col_major,
         }
     }
 }
@@ -138,6 +143,7 @@ where
                 .zip(rhs.data.into_iter())
                 .map(|(a, b)| a + b)
                 .collect(),
+            col_major: self.col_major,
         }
     }
 }
@@ -161,6 +167,7 @@ where
                 .zip(rhs.data.into_iter())
                 .map(|(a, b)| a - b)
                 .collect(),
+            col_major: self.col_major,
         }
     }
 }
@@ -184,6 +191,7 @@ where
                 .zip(rhs.data.into_iter())
                 .map(|(a, b)| a * b)
                 .collect(),
+            col_major: self.col_major,
         }
     }
 }
@@ -207,6 +215,7 @@ where
                 .zip(rhs.data.into_iter())
                 .map(|(a, b)| a / b)
                 .collect(),
+            col_major: self.col_major,
         }
     }
 }
