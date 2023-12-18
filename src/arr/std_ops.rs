@@ -10,7 +10,7 @@ where
 
     fn neg(self) -> Self::Output {
         Self::Output {
-            data: self.data.into_iter().map(|a| -a).collect(),
+            values: self.values.into_iter().map(|a| -a).collect(),
         }
     }
 }
@@ -23,7 +23,7 @@ where
 
     fn neg(self) -> Self::Output {
         Self::Output {
-            data: self.data.iter().map(|&a| -a).collect(),
+            values: self.values.iter().map(|&a| -a).collect(),
         }
     }
 }
@@ -33,56 +33,56 @@ where
 #[opimps::impl_ops_lprim(Add)]
 fn add(self: f64, rhs: Arr<f64>) -> Arr<f64> {
     Arr {
-        data: rhs.data.iter().map(|&a| self + a).collect(),
+        values: rhs.values.iter().map(|&a| self + a).collect(),
     }
 }
 
 #[opimps::impl_ops_lprim(Add)]
 fn add(self: Complex64, rhs: Arr<Complex64>) -> Arr<Complex64> {
     Arr {
-        data: rhs.data.iter().map(|&a| self + a).collect(),
+        values: rhs.values.iter().map(|&a| self + a).collect(),
     }
 }
 
 #[opimps::impl_ops_lprim(Sub)]
 fn sub(self: f64, rhs: Arr<f64>) -> Arr<f64> {
     Arr {
-        data: rhs.data.iter().map(|&a| self - a).collect(),
+        values: rhs.values.iter().map(|&a| self - a).collect(),
     }
 }
 
 #[opimps::impl_ops_lprim(Sub)]
 fn sub(self: Complex64, rhs: Arr<Complex64>) -> Arr<Complex64> {
     Arr {
-        data: rhs.data.iter().map(|&a| self - a).collect(),
+        values: rhs.values.iter().map(|&a| self - a).collect(),
     }
 }
 
 #[opimps::impl_ops_lprim(Mul)]
 fn mul(self: f64, rhs: Arr<f64>) -> Arr<f64> {
     Arr {
-        data: rhs.data.iter().map(|&a| self * a).collect(),
+        values: rhs.values.iter().map(|&a| self * a).collect(),
     }
 }
 
 #[opimps::impl_ops_lprim(Mul)]
 fn mul(self: Complex64, rhs: Arr<Complex64>) -> Arr<Complex64> {
     Arr {
-        data: rhs.data.iter().map(|&a| self * a).collect(),
+        values: rhs.values.iter().map(|&a| self * a).collect(),
     }
 }
 
 #[opimps::impl_ops_lprim(Div)]
 fn div(self: f64, rhs: Arr<f64>) -> Arr<f64> {
     Arr {
-        data: rhs.data.iter().map(|&a| self / a).collect(),
+        values: rhs.values.iter().map(|&a| self / a).collect(),
     }
 }
 
 #[opimps::impl_ops_lprim(Div)]
 fn div(self: Complex64, rhs: Arr<Complex64>) -> Arr<Complex64> {
     Arr {
-        data: rhs.data.iter().map(|&a| self / a).collect(),
+        values: rhs.values.iter().map(|&a| self / a).collect(),
     }
 }
 
@@ -96,7 +96,7 @@ where
     T: Add<T, Output = T> + Copy,
 {
     Arr {
-        data: self.data.iter().map(|&a| a + rhs).collect(),
+        values: self.values.iter().map(|&a| a + rhs).collect(),
     }
 }
 
@@ -106,7 +106,7 @@ where
     T: Sub<T, Output = T> + Copy,
 {
     Arr {
-        data: self.data.iter().map(|&a| a - rhs).collect(),
+        values: self.values.iter().map(|&a| a - rhs).collect(),
     }
 }
 
@@ -116,7 +116,7 @@ where
     T: Mul<T, Output = T> + Copy,
 {
     Arr {
-        data: self.data.iter().map(|&a| a * rhs).collect(),
+        values: self.values.iter().map(|&a| a * rhs).collect(),
     }
 }
 
@@ -126,7 +126,7 @@ where
     T: Div<T, Output = T> + Copy,
 {
     Arr {
-        data: self.data.iter().map(|&a| a / rhs).collect(),
+        values: self.values.iter().map(|&a| a / rhs).collect(),
     }
 }
 
@@ -137,13 +137,13 @@ fn add<T>(self: Arr<T>, rhs: Arr<T>) -> Arr<T>
 where
     T: Add<T, Output = T> + Copy,
 {
-    assert_eq!(self.data.len(), rhs.data.len());
+    assert_eq!(self.values.len(), rhs.values.len());
 
     Self::Output {
-        data: self
-            .data
+        values: self
+            .values
             .iter()
-            .zip(rhs.data.iter())
+            .zip(rhs.values.iter())
             .map(|(&a, &b)| a + b)
             .collect(),
     }
@@ -154,13 +154,13 @@ fn sub<T>(self: Arr<T>, rhs: Arr<T>) -> Arr<T>
 where
     T: Sub<T, Output = T> + Copy,
 {
-    assert_eq!(self.data.len(), rhs.data.len());
+    assert_eq!(self.values.len(), rhs.values.len());
 
     Self::Output {
-        data: self
-            .data
+        values: self
+            .values
             .iter()
-            .zip(rhs.data.iter())
+            .zip(rhs.values.iter())
             .map(|(&a, &b)| a - b)
             .collect(),
     }
@@ -171,13 +171,13 @@ fn mul<T>(self: Arr<T>, rhs: Arr<T>) -> Arr<T>
 where
     T: Mul<T, Output = T> + Copy,
 {
-    assert_eq!(self.data.len(), rhs.data.len());
+    assert_eq!(self.values.len(), rhs.values.len());
 
     Self::Output {
-        data: self
-            .data
+        values: self
+            .values
             .iter()
-            .zip(rhs.data.iter())
+            .zip(rhs.values.iter())
             .map(|(&a, &b)| a * b)
             .collect(),
     }
@@ -188,13 +188,13 @@ fn div<T>(self: Arr<T>, rhs: Arr<T>) -> Arr<T>
 where
     T: Div<T, Output = T> + Copy,
 {
-    assert_eq!(self.data.len(), rhs.data.len());
+    assert_eq!(self.values.len(), rhs.values.len());
 
     Self::Output {
-        data: self
-            .data
+        values: self
+            .values
             .iter()
-            .zip(rhs.data.iter())
+            .zip(rhs.values.iter())
             .map(|(&a, &b)| a / b)
             .collect(),
     }
@@ -207,10 +207,10 @@ fn add_assign<T>(self: Arr<T>, rhs: Arr<T>)
 where
     T: AddAssign<T> + Copy,
 {
-    assert_eq!(self.data.len(), rhs.data.len());
-    self.data
+    assert_eq!(self.values.len(), rhs.values.len());
+    self.values
         .iter_mut()
-        .zip(rhs.data.iter())
+        .zip(rhs.values.iter())
         .for_each(|(a, &b)| *a += b);
 }
 
@@ -219,10 +219,10 @@ fn sub_assign<T>(self: Arr<T>, rhs: Arr<T>)
 where
     T: SubAssign<T> + Copy,
 {
-    assert_eq!(self.data.len(), rhs.data.len());
-    self.data
+    assert_eq!(self.values.len(), rhs.values.len());
+    self.values
         .iter_mut()
-        .zip(rhs.data.iter())
+        .zip(rhs.values.iter())
         .for_each(|(a, &b)| *a -= b);
 }
 
@@ -231,10 +231,10 @@ fn mul_assign<T>(self: Arr<T>, rhs: Arr<T>)
 where
     T: MulAssign<T> + Copy,
 {
-    assert_eq!(self.data.len(), rhs.data.len());
-    self.data
+    assert_eq!(self.values.len(), rhs.values.len());
+    self.values
         .iter_mut()
-        .zip(rhs.data.iter())
+        .zip(rhs.values.iter())
         .for_each(|(a, &b)| *a *= b);
 }
 
@@ -243,10 +243,10 @@ fn div_assign<T>(self: Arr<T>, rhs: Arr<T>)
 where
     T: DivAssign<T> + Copy,
 {
-    assert_eq!(self.data.len(), rhs.data.len());
-    self.data
+    assert_eq!(self.values.len(), rhs.values.len());
+    self.values
         .iter_mut()
-        .zip(rhs.data.iter())
+        .zip(rhs.values.iter())
         .for_each(|(a, &b)| *a /= b);
 }
 
@@ -257,7 +257,7 @@ where
     T: AddAssign<T> + Copy,
 {
     fn add_assign(&mut self, rhs: T) {
-        self.data.iter_mut().for_each(|a| *a += rhs);
+        self.values.iter_mut().for_each(|a| *a += rhs);
     }
 }
 
@@ -266,7 +266,7 @@ where
     T: SubAssign<T> + Copy,
 {
     fn sub_assign(&mut self, rhs: T) {
-        self.data.iter_mut().for_each(|a| *a -= rhs);
+        self.values.iter_mut().for_each(|a| *a -= rhs);
     }
 }
 
@@ -275,7 +275,7 @@ where
     T: MulAssign<T> + Copy,
 {
     fn mul_assign(&mut self, rhs: T) {
-        self.data.iter_mut().for_each(|a| *a *= rhs);
+        self.values.iter_mut().for_each(|a| *a *= rhs);
     }
 }
 
@@ -284,6 +284,6 @@ where
     T: DivAssign<T> + Copy,
 {
     fn div_assign(&mut self, rhs: T) {
-        self.data.iter_mut().for_each(|a| *a /= rhs);
+        self.values.iter_mut().for_each(|a| *a /= rhs);
     }
 }

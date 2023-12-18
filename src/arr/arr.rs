@@ -1,4 +1,4 @@
-use crate::densetools::{ones, to_string, zeros};
+use crate::full::{ones, to_string, zeros};
 use crate::slice::{
     all, any, arange, argmax, argsort, cum_sum, diff, find, is_nan, linspace, max, mean, min,
     nonzero, norm, prod, range, select, set_all, set_slice, std,
@@ -12,7 +12,7 @@ use std::ops::{AddAssign, Deref, DerefMut, Div, DivAssign, MulAssign, Sub};
 
 #[derive(Debug, Clone)]
 pub struct Arr<T> {
-    pub(crate) data: Vec<T>,
+    pub(crate) values: Vec<T>,
 }
 
 impl<T> Arr<T>
@@ -20,43 +20,43 @@ where
     T: Clone + Copy + Zero + One,
 {
     pub fn new() -> Self {
-        Self { data: Vec::new() }
+        Self { values: Vec::new() }
     }
 
-    pub fn with_vec(data: Vec<T>) -> Self {
-        Self { data }
+    pub fn with_vec(values: Vec<T>) -> Self {
+        Self { values }
     }
 
     pub fn with_value(n: usize, v: T) -> Self {
-        Self { data: vec![v; n] }
+        Self { values: vec![v; n] }
     }
 
     pub fn with_capacity(n: usize) -> Self {
         Self {
-            data: Vec::with_capacity(n),
+            values: Vec::with_capacity(n),
         }
     }
 
     pub fn zeros(n: usize) -> Self {
-        Self { data: zeros(1, n) }
+        Self { values: zeros(1, n) }
     }
 
     pub fn ones(n: usize) -> Self {
-        Self { data: ones(1, n) }
+        Self { values: ones(1, n) }
     }
 
     pub fn range(stop: usize) -> Self
     where
         T: FromPrimitive,
     {
-        Self { data: range(stop) }
+        Self { values: range(stop) }
     }
     pub fn arange(start: T, stop: T, step: T) -> Self
     where
         T: Sub<Output = T> + Div<Output = T> + ToPrimitive + PartialOrd + AddAssign,
     {
         Self {
-            data: arange(start, stop, step),
+            values: arange(start, stop, step),
         }
     }
 
@@ -76,52 +76,52 @@ where
             + One,
     {
         Self {
-            data: linspace(start, stop, num, inclusive),
+            values: linspace(start, stop, num, inclusive),
         }
     }
 
     pub fn concat(a: &[&[T]]) -> Self {
-        Self { data: a.concat() }
+        Self { values: a.concat() }
     }
 
-    pub fn data(&self) -> &[T] {
-        &self.data
+    pub fn values(&self) -> &[T] {
+        &self.values
     }
 
     pub fn vec(self) -> Vec<T> {
-        self.data
+        self.values
     }
 
     pub fn find<U>(&self) -> Vec<U>
     where
         U: FromPrimitive,
     {
-        find(&self.data)
+        find(&self.values)
     }
     pub fn any(&self) -> bool {
-        any(&self.data)
+        any(&self.values)
     }
     pub fn all(&self) -> bool {
-        all(&self.data)
+        all(&self.values)
     }
 
     pub fn select(&self, ix: &[usize]) -> Arr<T> {
         Arr {
-            data: select(&self.data, ix),
+            values: select(&self.values, ix),
         }
     }
 
     pub fn set(&mut self, ix: &[usize], v: &[T]) {
         assert_eq!(ix.len(), v.len());
-        set_slice(&mut self.data, ix, v);
+        set_slice(&mut self.values, ix, v);
     }
 
     pub fn set_all(&mut self, ix: &[usize], v: T) {
-        set_all(&mut self.data, ix, v);
+        set_all(&mut self.values, ix, v);
     }
 
     pub fn sum(&self) -> T {
-        self.data
+        self.values
             .iter()
             .map(|&x| x)
             .reduce(|x, y| x + y)
@@ -129,31 +129,31 @@ where
     }
 
     pub fn nonzero(&self) -> Vec<usize> {
-        nonzero(&self.data)
+        nonzero(&self.values)
     }
 
     pub fn prod(&self) -> T {
-        prod(&self.data)
+        prod(&self.values)
     }
     pub fn cumsum(&self) -> Vec<T>
     where
         T: AddAssign,
     {
-        cum_sum(&self.data)
+        cum_sum(&self.values)
     }
 
     pub fn sort(&mut self) -> Vec<usize>
     where
         T: PartialOrd,
     {
-        argsort(&mut self.data, false)
+        argsort(&mut self.values, false)
     }
 
     pub fn sort_order(&mut self, reverse: bool) -> Vec<usize>
     where
         T: PartialOrd,
     {
-        argsort(&mut self.data, reverse)
+        argsort(&mut self.values, reverse)
     }
 
     /// Returns an array where the values are `T::ln(a[i])`.
@@ -162,7 +162,7 @@ where
         T: Ln,
     {
         Arr {
-            data: self.data.iter().map(|x| x.ln()).collect(),
+            values: self.values.iter().map(|x| x.ln()).collect(),
         }
     }
 
@@ -172,7 +172,7 @@ where
         T: Exp,
     {
         Arr {
-            data: self.data.iter().map(|x| x.exp()).collect(),
+            values: self.values.iter().map(|x| x.exp()).collect(),
         }
     }
 
@@ -182,7 +182,7 @@ where
         T: Abs,
     {
         Arr {
-            data: self.data.iter().map(|x| x.abs()).collect(),
+            values: self.values.iter().map(|x| x.abs()).collect(),
         }
     }
 
@@ -193,7 +193,7 @@ where
         R: Copy,
     {
         Arr {
-            data: self.data.iter().map(|x| x.pow(e)).collect(),
+            values: self.values.iter().map(|x| x.pow(e)).collect(),
         }
     }
 
@@ -203,7 +203,7 @@ where
         T: Round,
     {
         Arr {
-            data: self.data.iter().map(|x| x.round()).collect(),
+            values: self.values.iter().map(|x| x.round()).collect(),
         }
     }
 
@@ -211,7 +211,7 @@ where
     where
         T: Round,
     {
-        for v in self.data.iter_mut() {
+        for v in self.values.iter_mut() {
             *v = v.round();
         }
     }
@@ -221,7 +221,7 @@ where
     where
         T: Bounded + PartialOrd + Copy,
     {
-        max(&self.data)
+        max(&self.values)
     }
 
     /// Returns the minimum value of `a`.
@@ -229,7 +229,7 @@ where
     where
         T: Bounded + PartialOrd + Copy,
     {
-        min(&self.data)
+        min(&self.values)
     }
 
     /// Returns the index of the maximum value of `a`.
@@ -237,7 +237,7 @@ where
     where
         T: Bounded + PartialOrd,
     {
-        argmax(&self.data)
+        argmax(&self.values)
     }
 
     /// Returns the mean of all element values.
@@ -245,7 +245,7 @@ where
     where
         T: Zero + Copy + AddAssign + Div<Output = T> + FromPrimitive,
     {
-        mean(&self.data)
+        mean(&self.values)
     }
 
     /// Returns the standard deviation.
@@ -260,7 +260,7 @@ where
             + Pow<usize, Output = T>
             + Sub<Output = T>,
     {
-        std(&self.data)
+        std(&self.values)
     }
 
     /// Returns an array with the discrete difference of `a`.
@@ -270,7 +270,7 @@ where
         T: Zero + Copy + Sub<Output = T>,
     {
         Arr {
-            data: diff(&self.data),
+            values: diff(&self.values),
         }
     }
 
@@ -279,7 +279,7 @@ where
     where
         T: Zero + Copy + Sqrt + AddAssign,
     {
-        norm(&self.data)
+        norm(&self.values)
     }
 
     /// Returns an integer array with 1s where `T::is_nan(self[i])`.
@@ -287,7 +287,7 @@ where
     where
         T: IsNaN,
     {
-        is_nan(&self.data)
+        is_nan(&self.values)
     }
 
     pub fn sqrt(&self) -> Arr<T>
@@ -295,7 +295,7 @@ where
         T: Sqrt,
     {
         Arr {
-            data: self.data.iter().map(|v| T::sqrt(v)).collect(),
+            values: self.values.iter().map(|v| T::sqrt(v)).collect(),
         }
     }
 
@@ -304,7 +304,7 @@ where
         T: Sin,
     {
         Arr {
-            data: self.data.iter().map(|v| T::sin(v)).collect(),
+            values: self.values.iter().map(|v| T::sin(v)).collect(),
         }
     }
 
@@ -313,7 +313,7 @@ where
         T: Cos,
     {
         Arr {
-            data: self.data.iter().map(|v| T::cos(v)).collect(),
+            values: self.values.iter().map(|v| T::cos(v)).collect(),
         }
     }
 
@@ -322,7 +322,7 @@ where
         T: ArcSin,
     {
         Arr {
-            data: self.data.iter().map(|v| T::asin(v)).collect(),
+            values: self.values.iter().map(|v| T::asin(v)).collect(),
         }
     }
 
@@ -331,7 +331,7 @@ where
         T: ArcCos,
     {
         Arr {
-            data: self.data.iter().map(|v| T::acos(v)).collect(),
+            values: self.values.iter().map(|v| T::acos(v)).collect(),
         }
     }
 
@@ -339,7 +339,7 @@ where
     where
         T: Display,
     {
-        self.data
+        self.values
             .iter()
             .map(|v| format!("{}", v).to_string())
             .collect::<Vec<String>>()
@@ -351,13 +351,13 @@ impl<T> Deref for Arr<T> {
     type Target = Vec<T>;
 
     fn deref(&self) -> &Self::Target {
-        &self.data
+        &self.values
     }
 }
 
 impl<T> DerefMut for Arr<T> {
     fn deref_mut(&mut self) -> &mut Self::Target {
-        &mut self.data
+        &mut self.values
     }
 }
 
@@ -366,6 +366,6 @@ where
     T: Display + Copy,
 {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
-        write!(f, "{}", to_string(1, self.len(), &self.data, true))
+        write!(f, "{}", to_string(1, self.len(), &self.values, true))
     }
 }

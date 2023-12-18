@@ -1,24 +1,24 @@
-use crate::densetools::{get_ref, identity, ix, mat_mat, mat_vec, ones, to_string, zeros};
+use crate::full::{get_ref, identity, ix, mat_mat, mat_vec, ones, to_string, zeros};
+
 use num_traits::{One, Zero};
 use std::fmt::{Display, Formatter};
 use std::ops::{Add, AddAssign, Mul};
 
-// pub type Matrix = Mat<f64>;
-
 pub struct Mat<T> {
     pub(crate) rows: usize,
     pub(crate) cols: usize,
-    // Matrix element values stored in row-major order (C-style).
-    pub(crate) data: Vec<T>,
+    // Matrix element values stored in row-major order (C-style)
+    // or column-major (Fortran style) order.
+    pub(crate) values: Vec<T>,
     pub(crate) col_major: bool,
 }
 
 impl<T> Mat<T> {
-    pub fn new(rows: usize, cols: usize, data: Vec<T>) -> Self {
+    pub fn new(rows: usize, cols: usize, values: Vec<T>) -> Self {
         Self {
             rows,
             cols,
-            data,
+            values,
             col_major: false,
         }
     }
@@ -30,7 +30,7 @@ impl<T> Mat<T> {
         Self {
             rows,
             cols,
-            data: zeros(rows, cols),
+            values: zeros(rows, cols),
             col_major: false,
         }
     }
@@ -42,7 +42,7 @@ impl<T> Mat<T> {
         Self {
             rows,
             cols,
-            data: ones(rows, cols),
+            values: ones(rows, cols),
             col_major: false,
         }
     }
@@ -54,7 +54,7 @@ impl<T> Mat<T> {
         Self {
             rows: n,
             cols: n,
-            data: identity(n),
+            values: identity(n),
             col_major: false,
         }
     }
@@ -69,12 +69,12 @@ impl<T> Mat<T> {
         (self.rows, self.cols)
     }
 
-    pub fn data(&self) -> &Vec<T> {
-        &self.data
+    pub fn values(&self) -> &Vec<T> {
+        &self.values
     }
 
-    pub fn data_mut(&mut self) -> &mut Vec<T> {
-        &mut self.data
+    pub fn values_mut(&mut self) -> &mut Vec<T> {
+        &mut self.values
     }
 
     pub fn get_ref(&self, row: usize, col: usize) -> &T {
@@ -83,7 +83,7 @@ impl<T> Mat<T> {
         get_ref(
             self.rows,
             self.cols,
-            self.data.as_slice(),
+            self.values.as_slice(),
             row,
             col,
             !self.col_major,
@@ -108,12 +108,12 @@ impl<T> Mat<T> {
         for &r in rows {
             let i = ix(self.rows, self.cols, r, 0, !self.col_major);
             let j = ix(self.rows, self.cols, r, self.cols - 1, !self.col_major);
-            data.extend(self.data[i..=j].to_vec())
+            data.extend(self.values[i..=j].to_vec())
         }
         Self {
             rows: rows.len(),
             cols: self.cols,
-            data,
+            values: data,
             col_major: false,
         }
     }
@@ -134,7 +134,7 @@ impl<T> Mat<T> {
     where
         T: Mul<Output = T> + Add<Output = T> + Zero + Copy,
     {
-        mat_vec(self.rows, self.cols, &self.data, b, true)
+        mat_vec(self.rows, self.cols, &self.values, b, true)
     }
 
     pub fn mat_mat(&self, b: &Self) -> Self
@@ -144,8 +144,8 @@ impl<T> Mat<T> {
         Self {
             rows: self.rows,
             cols: b.cols,
-            data: mat_mat(
-                self.rows, self.cols, &self.data, b.rows, b.cols, &b.data, true,
+            values: mat_mat(
+                self.rows, self.cols, &self.values, b.rows, b.cols, &b.values, true,
             ),
             col_major: false,
         }
@@ -157,6 +157,6 @@ where
     T: Copy + Display,
 {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
-        write!(f, "{}", to_string(self.rows, self.cols, &self.data, true))
+        write!(f, "{}", to_string(self.rows, self.cols, &self.values, true))
     }
 }

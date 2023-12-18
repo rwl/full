@@ -12,7 +12,7 @@ where
             rows: self.rows,
             cols: self.cols,
             // data: self.into_iter().map(|a| -a).collect(),
-            data: self.data.into_iter().map(|a| -a).collect(),
+            values: self.values.into_iter().map(|a| -a).collect(),
             col_major: self.col_major,
         }
     }
@@ -30,7 +30,7 @@ where
         Self::Output {
             rows: self.rows,
             cols: self.cols,
-            data: self.data.into_iter().map(|a| a + rhs).collect(),
+            values: self.values.into_iter().map(|a| a + rhs).collect(),
             col_major: self.col_major,
         }
     }
@@ -46,7 +46,7 @@ where
         Self::Output {
             rows: self.rows,
             cols: self.cols,
-            data: self.data.into_iter().map(|a| a - rhs).collect(),
+            values: self.values.into_iter().map(|a| a - rhs).collect(),
             col_major: self.col_major,
         }
     }
@@ -62,7 +62,7 @@ where
         Self::Output {
             rows: self.rows,
             cols: self.cols,
-            data: self.data.into_iter().map(|a| a * rhs).collect(),
+            values: self.values.into_iter().map(|a| a * rhs).collect(),
             col_major: self.col_major,
         }
     }
@@ -78,7 +78,7 @@ where
         Self::Output {
             rows: self.rows,
             cols: self.cols,
-            data: self.data.into_iter().map(|a| a / rhs).collect(),
+            values: self.values.into_iter().map(|a| a / rhs).collect(),
             col_major: self.col_major,
         }
     }
@@ -91,7 +91,7 @@ where
     T: AddAssign<T> + Copy,
 {
     fn add_assign(&mut self, rhs: T) {
-        self.data.iter_mut().for_each(|a| *a += rhs);
+        self.values.iter_mut().for_each(|a| *a += rhs);
     }
 }
 
@@ -100,7 +100,7 @@ where
     T: SubAssign<T> + Copy,
 {
     fn sub_assign(&mut self, rhs: T) {
-        self.data.iter_mut().for_each(|a| *a -= rhs);
+        self.values.iter_mut().for_each(|a| *a -= rhs);
     }
 }
 
@@ -109,7 +109,7 @@ where
     T: MulAssign<T> + Copy,
 {
     fn mul_assign(&mut self, rhs: T) {
-        self.data.iter_mut().for_each(|a| *a *= rhs);
+        self.values.iter_mut().for_each(|a| *a *= rhs);
     }
 }
 
@@ -118,7 +118,7 @@ where
     T: DivAssign<T> + Copy,
 {
     fn div_assign(&mut self, rhs: T) {
-        self.data.iter_mut().for_each(|a| *a /= rhs);
+        self.values.iter_mut().for_each(|a| *a /= rhs);
     }
 }
 
@@ -137,10 +137,10 @@ where
         Self::Output {
             rows: self.rows,
             cols: self.cols,
-            data: self
-                .data
+            values: self
+                .values
                 .into_iter()
-                .zip(rhs.data.into_iter())
+                .zip(rhs.values.into_iter())
                 .map(|(a, b)| a + b)
                 .collect(),
             col_major: self.col_major,
@@ -161,10 +161,10 @@ where
         Self::Output {
             rows: self.rows,
             cols: self.cols,
-            data: self
-                .data
+            values: self
+                .values
                 .into_iter()
-                .zip(rhs.data.into_iter())
+                .zip(rhs.values.into_iter())
                 .map(|(a, b)| a - b)
                 .collect(),
             col_major: self.col_major,
@@ -185,10 +185,10 @@ where
         Self::Output {
             rows: self.rows,
             cols: self.cols,
-            data: self
-                .data
+            values: self
+                .values
                 .into_iter()
-                .zip(rhs.data.into_iter())
+                .zip(rhs.values.into_iter())
                 .map(|(a, b)| a * b)
                 .collect(),
             col_major: self.col_major,
@@ -209,10 +209,10 @@ where
         Self::Output {
             rows: self.rows,
             cols: self.cols,
-            data: self
-                .data
+            values: self
+                .values
                 .into_iter()
-                .zip(rhs.data.into_iter())
+                .zip(rhs.values.into_iter())
                 .map(|(a, b)| a / b)
                 .collect(),
             col_major: self.col_major,
@@ -230,9 +230,9 @@ where
         assert_eq!(self.rows, rhs.rows);
         assert_eq!(self.cols, rhs.cols);
 
-        self.data
+        self.values
             .iter_mut()
-            .zip(rhs.data.into_iter())
+            .zip(rhs.values.into_iter())
             .for_each(|(a, b)| *a += b);
     }
 }
@@ -245,9 +245,9 @@ where
         assert_eq!(self.rows, rhs.rows);
         assert_eq!(self.cols, rhs.cols);
 
-        self.data
+        self.values
             .iter_mut()
-            .zip(rhs.data.into_iter())
+            .zip(rhs.values.into_iter())
             .for_each(|(a, b)| *a -= b);
     }
 }
@@ -260,9 +260,9 @@ where
         assert_eq!(self.rows, rhs.rows);
         assert_eq!(self.cols, rhs.cols);
 
-        self.data
+        self.values
             .iter_mut()
-            .zip(rhs.data.into_iter())
+            .zip(rhs.values.into_iter())
             .for_each(|(a, b)| *a *= b);
     }
 }
@@ -275,9 +275,9 @@ where
         assert_eq!(self.rows, rhs.rows);
         assert_eq!(self.cols, rhs.cols);
 
-        self.data
+        self.values
             .iter_mut()
-            .zip(rhs.data.into_iter())
+            .zip(rhs.values.into_iter())
             .for_each(|(a, b)| *a /= b);
     }
 }

@@ -35,7 +35,7 @@ where
         assert_eq!(real.len(), imag.len());
 
         Arr {
-            data: real
+            values: real
                 .iter()
                 .zip(imag)
                 .map(|(&re, &im)| C::new(re, im))
@@ -45,12 +45,12 @@ where
 
     fn from_real(real: &[F]) -> Arr<C> {
         Arr {
-            data: real.iter().map(|&re| C::new(re, F::zero())).collect(),
+            values: real.iter().map(|&re| C::new(re, F::zero())).collect(),
         }
     }
     fn from_imag(imag: &[F]) -> Arr<C> {
         Arr {
-            data: imag.iter().map(|&im| C::new(F::zero(), im)).collect(),
+            values: imag.iter().map(|&im| C::new(F::zero(), im)).collect(),
         }
     }
 
@@ -63,14 +63,14 @@ where
             data.push(C::new(interleaved[2 * i], interleaved[2 * i + 1]));
         }
 
-        Arr { data }
+        Arr { values: data }
     }
 
     fn from_polar(r: &[F], theta: &[F]) -> Arr<C> {
         assert_eq!(r.len(), theta.len());
 
         Arr {
-            data: r
+            values: r
                 .iter()
                 .zip(theta)
                 .map(|p| C::from_polar(*p.0, *p.1))
@@ -80,29 +80,29 @@ where
 
     fn real(&self) -> Arr<F> {
         Arr {
-            data: self.data.iter().map(|c| c.real()).collect(),
+            values: self.values.iter().map(|c| c.real()).collect(),
         }
     }
     fn imag(&self) -> Arr<F> {
         Arr {
-            data: self.data.iter().map(|c| c.imag()).collect(),
+            values: self.values.iter().map(|c| c.imag()).collect(),
         }
     }
 
     fn conj(&self) -> Self {
         Arr {
-            data: self.data.iter().map(|c| c.conj()).collect(),
+            values: self.values.iter().map(|c| c.conj()).collect(),
         }
     }
 
     fn norm(&self) -> Arr<F> {
         Arr {
-            data: self.data.iter().map(|c| c.norm()).collect(),
+            values: self.values.iter().map(|c| c.norm()).collect(),
         }
     }
     fn arg(&self) -> Arr<F> {
         Arr {
-            data: self.data.iter().map(|c| c.arg()).collect(),
+            values: self.values.iter().map(|c| c.arg()).collect(),
         }
     }
     fn to_polar(&self) -> (Arr<F>, Arr<F>) {
@@ -111,11 +111,11 @@ where
 
     fn interleave(&self) -> Arr<F> {
         let mut data = Vec::with_capacity(2 * self.len());
-        for c in &self.data {
+        for c in &self.values {
             data.push(c.real());
             data.push(c.imag());
         }
-        Arr { data }
+        Arr { values: data }
     }
 }
 
@@ -125,7 +125,7 @@ where
     C: Complex<F>,
 {
     Arr {
-        data: a.iter().map(|c| c.conj()).collect(),
+        values: a.iter().map(|c| c.conj()).collect(),
     }
 }
 
@@ -135,6 +135,6 @@ where
     C: Complex<F>,
 {
     Arr {
-        data: a.iter().map(|c| c.pow(r)).collect(),
+        values: a.iter().map(|c| c.pow(r)).collect(),
     }
 }

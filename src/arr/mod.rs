@@ -1,8 +1,8 @@
 mod arr;
 mod carr;
 
-pub mod random;
-pub mod std_ops;
+mod random;
+mod std_ops;
 
 #[cfg(test)]
 mod arr_test;
@@ -11,3 +11,5 @@ mod carr_test;
 
 pub use arr::*;
 pub use carr::*;
+pub use random::*;
+pub use std_ops::*;

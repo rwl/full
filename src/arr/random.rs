@@ -16,7 +16,7 @@ impl Rand for Arr<f64> {
     fn rand(n: usize) -> Self {
         let mut rng = rand::thread_rng();
         Self {
-            data: (0..n).map(|_| rng.gen()).collect(),
+            values: (0..n).map(|_| rng.gen()).collect(),
         }
     }
 
@@ -24,7 +24,7 @@ impl Rand for Arr<f64> {
         let mut rng = rand::thread_rng();
         // let normal = rand::distributions::StandardNormal::new();
         Self {
-            data: (0..n)
+            values: (0..n)
                 .map(|_| rng.sample(rand_distr::StandardNormal))
                 .collect(),
         }
@@ -35,7 +35,7 @@ impl Rand for Arr<Complex64> {
     fn rand(n: usize) -> Self {
         let mut rng = rand::thread_rng();
         Self {
-            data: (0..n)
+            values: (0..n)
                 .map(|_| Complex64::new(rng.gen(), rng.gen()))
                 .collect(),
         }
@@ -44,7 +44,7 @@ impl Rand for Arr<Complex64> {
     fn randn(n: usize) -> Self {
         let mut rng = rand::thread_rng();
         Self {
-            data: (0..n)
+            values: (0..n)
                 .map(|_| {
                     Complex64::new(
                         rng.sample(rand_distr::StandardNormal),

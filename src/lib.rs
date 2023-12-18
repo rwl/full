@@ -1,12 +1,10 @@
-extern crate core;
+mod arr;
+mod mat;
+mod traits;
+mod full;
 
-pub mod arr;
-pub mod mat;
-pub mod traits;
-
-mod densetools;
-pub mod random;
 pub mod slice;
 
-// pub use densetools::*;
-// pub use slice::*;
+pub use arr::*;
+pub use mat::*;
+pub use traits::*;

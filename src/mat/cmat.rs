@@ -15,7 +15,7 @@ where
         Mat {
             rows: self.rows,
             cols: self.cols,
-            data: self.data.iter().map(|c| c.real()).collect(),
+            values: self.values.iter().map(|c| c.real()).collect(),
             col_major: self.col_major,
         }
     }
@@ -24,7 +24,7 @@ where
         Mat {
             rows: self.rows,
             cols: self.cols,
-            data: self.data.iter().map(|c| c.imag()).collect(),
+            values: self.values.iter().map(|c| c.imag()).collect(),
             col_major: self.col_major,
         }
     }
@@ -33,7 +33,7 @@ where
         Mat {
             rows: self.rows,
             cols: self.cols,
-            data: self.data.iter().map(|c| c.conj()).collect(),
+            values: self.values.iter().map(|c| c.conj()).collect(),
             col_major: self.col_major,
         }
     }
