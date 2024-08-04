@@ -1,8 +1,9 @@
 mod arr;
+mod full;
 mod mat;
 mod traits;
-mod full;
 
+pub mod iter;
 pub mod slice;
 
 pub use arr::*;

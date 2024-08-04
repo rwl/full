@@ -3,6 +3,7 @@ use num_traits::float::FloatCore;
 pub trait Float: num_traits::Float + num_traits::Zero {}
 
 impl Float for f64 {}
+
 impl Float for f32 {}
 
 pub trait Complex<T> {

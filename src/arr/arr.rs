@@ -4,6 +4,7 @@ use crate::slice::{
     nonzero, norm, prod, range, select, set_all, set_slice, std,
 };
 use crate::traits::{Abs, ArcCos, ArcSin, Cos, Exp, IsNaN, Ln, Round, Sin, Sqrt};
+
 use num_traits::{Bounded, FromPrimitive, One, Pow, ToPrimitive, Zero};
 use std::fmt::{Display, Formatter};
 use std::ops::{AddAssign, Deref, DerefMut, Div, DivAssign, MulAssign, Sub};
@@ -13,6 +14,7 @@ use std::ops::{AddAssign, Deref, DerefMut, Div, DivAssign, MulAssign, Sub};
 #[derive(Debug, Clone)]
 pub struct Arr<T> {
     pub(crate) values: Vec<T>,
+    // pub(crate) column: bool,
 }
 
 impl<T> Arr<T>
@@ -38,7 +40,9 @@ where
     }
 
     pub fn zeros(n: usize) -> Self {
-        Self { values: zeros(1, n) }
+        Self {
+            values: zeros(1, n),
+        }
     }
 
     pub fn ones(n: usize) -> Self {
@@ -49,7 +53,9 @@ where
     where
         T: FromPrimitive,
     {
-        Self { values: range(stop) }
+        Self {
+            values: range(stop),
+        }
     }
     pub fn arange(start: T, stop: T, step: T) -> Self
     where
@@ -146,14 +152,19 @@ where
     where
         T: PartialOrd,
     {
-        argsort(&mut self.values, false)
+        self.sort_order(false)
     }
 
     pub fn sort_order(&mut self, reverse: bool) -> Vec<usize>
     where
         T: PartialOrd,
     {
-        argsort(&mut self.values, reverse)
+        let ix = argsort(&self.values, reverse);
+        let values0 = self.values.clone();
+        for (i, &j) in ix.iter().enumerate() {
+            self.values[i] = values0[j];
+        }
+        ix
     }
 
     /// Returns an array where the values are `T::ln(a[i])`.
@@ -366,6 +377,19 @@ where
     T: Display + Copy,
 {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
-        write!(f, "{}", to_string(1, self.len(), &self.values, true))
+        write!(f, "{}", to_string(1, self.len(), &self.values, false))
     }
+}
+
+#[macro_export]
+macro_rules! arr {
+    () => (
+        $crate::Arr::new()
+    );
+    ($elem:expr; $n:expr) => (
+        $crate::Arr::with_value( $n, $elem)
+    );
+    ($($x:expr),+ $(,)?) => (
+        $crate::Arr::with_vec(vec![$($x),+])
+    );
 }

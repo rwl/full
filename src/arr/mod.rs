@@ -12,4 +12,3 @@ mod carr_test;
 pub use arr::*;
 pub use carr::*;
 pub use random::*;
-pub use std_ops::*;

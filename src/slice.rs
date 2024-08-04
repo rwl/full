@@ -304,19 +304,15 @@ where
 
 /// Sorts the elements of a into ascending order in-place and
 /// returns the new indexes of the elements.
-pub fn argsort<T>(a: &mut [T], reverse: bool) -> Vec<usize>
+pub fn argsort<T>(a: &[T], reverse: bool) -> Vec<usize>
 where
     T: PartialOrd + Copy,
 {
-    let a0 = a.to_vec(); // FIXME: avoid copy
     let mut ix: Vec<usize> = (0..a.len()).collect();
     // ix.sort_by_key(|&i| a[i]);
     ix.sort_unstable_by(|&i, &j| a[i].partial_cmp(&a[j]).unwrap());
     if reverse {
         ix.reverse()
-    }
-    for (i, &j) in ix.iter().enumerate() {
-        a[i] = a0[j];
     }
     ix
 }
@@ -350,7 +346,7 @@ where
 {
     assert_ne!(a.len(), 0);
 
-    let mut max = T::max_value();
+    let mut max = T::min_value();
     let mut ix = 0;
     for (i, &v) in a.iter().enumerate() {
         if v > max {

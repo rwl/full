@@ -1,6 +1,7 @@
 use crate::arr::random::Rand;
 use crate::arr::Arr;
 use crate::slice::dot;
+
 use rand::Rng;
 
 const TEST_N: usize = 10_000;
