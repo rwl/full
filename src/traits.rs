@@ -80,6 +80,21 @@ where
     }
 }
 
+// Arg //
+
+pub trait Arg<F> {
+    fn arg(&self) -> F;
+}
+
+impl<F> Arg<F> for num_complex::Complex<F>
+where
+    F: Float,
+{
+    fn arg(&self) -> F {
+        num_complex::Complex::arg(*self)
+    }
+}
+
 // Ln //
 
 pub trait Ln {

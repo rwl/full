@@ -1,7 +1,23 @@
-use crate::traits::{IsNaN, Norm, Sqrt};
+use crate::traits::{Arg, Complex, IsNaN, Norm, Sqrt};
 use num_traits::bounds::Bounded;
 use num_traits::{FromPrimitive, One, Pow, ToPrimitive, Zero};
+use std::cmp::Ordering;
+use std::iter::zip;
 use std::ops::{Add, AddAssign, Div, DivAssign, Mul, MulAssign, Sub};
+
+pub fn zeros<T>(n: usize) -> Vec<T>
+where
+    T: Clone + Zero,
+{
+    crate::full::zeros(1, n)
+}
+
+pub fn ones<T>(n: usize) -> Vec<T>
+where
+    T: Clone + One,
+{
+    crate::full::ones(1, n)
+}
 
 /// Returns a vector with the indexes of the nonzero elements of `a`.
 pub fn find<T, U>(a: &[T]) -> Vec<U>
@@ -227,6 +243,20 @@ where
         .zip(b)
         .map(|(&x, &y)| if x != y { U::one() } else { U::zero() })
         .collect()
+}
+
+pub fn sub<T>(a: &[T], b: &[T]) -> Vec<T>
+where
+    T: Copy + Sub<Output = T>,
+{
+    zip(a, b).map(|(ai, bi)| *ai - *bi).collect()
+}
+
+pub fn pow<T>(a: &[T], x: T) -> Vec<T>
+where
+    T: Copy + Pow<T, Output = T>,
+{
+    a.iter().map(|ai| ai.pow(x)).collect()
 }
 
 /// Returns a vector with the values of `a` at indexes `ix`.
@@ -524,6 +554,20 @@ where
         .unwrap()
 }
 
+/// Returns the maximum elements from `a` or `b`.
+pub fn max2<T>(a: &[T], b: &[T]) -> Vec<T>
+where
+    T: Bounded + PartialOrd + Copy,
+{
+    zip(a, b)
+        .map(|(a, b)| match a.partial_cmp(b).unwrap() {
+            Ordering::Less => *a,
+            Ordering::Equal => *a,
+            Ordering::Greater => *b,
+        })
+        .collect()
+}
+
 /// Returns an integer array with 1s where `T::is_nan(self[i])`.
 pub fn is_nan<T>(a: &[T]) -> Vec<usize>
 where
@@ -536,4 +580,54 @@ where
         }
     }
     b
+}
+
+/// Returns the absolute value of each element in input `a`.
+pub fn abs<T, F>(a: &[T]) -> Vec<F>
+where
+    T: Norm<F> + Copy,
+{
+    crate::iter::abs(a.iter().copied()).collect()
+}
+
+/// Returns the phase angle of each element of a complex slice `a`.
+pub fn angle<T, F>(a: &[T]) -> Vec<F>
+where
+    T: Arg<F> + Copy,
+{
+    crate::iter::angle(a.iter().copied()).collect()
+}
+
+pub fn isempty<T>(a: &[T]) -> bool {
+    a.is_empty()
+}
+
+pub fn polar<T, C>(r: &[T], theta: &[T]) -> Vec<C>
+where
+    C: Complex<T>,
+    T: Copy,
+{
+    zip(r, theta).map(|p| C::from_polar(*p.0, *p.1)).collect()
+}
+
+pub fn complex<T, C>(re: &[T], im: &[T]) -> Vec<C>
+where
+    C: Complex<T>,
+    T: Copy,
+{
+    zip(re, im).map(|p| C::new(*p.0, *p.1)).collect()
+}
+
+pub fn conj<C, T>(a: &[C]) -> Vec<C>
+where
+    C: Complex<T>,
+{
+    a.iter().map(|c| c.conj()).collect()
+}
+
+pub fn recip<T>(a: &[T]) -> Vec<T>
+where
+    T: One + Div<Output = T> + Copy,
+{
+    a.iter().map(|v| T::one() / *v).collect()
 }

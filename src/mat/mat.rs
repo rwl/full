@@ -76,6 +76,23 @@ impl<T> Mat<T> {
         }
     }
 
+    pub fn with_diagonal(diag: &[T], col_major: bool) -> Self
+    where
+        T: Copy + Clone + Zero + One,
+    {
+        let n = diag.len();
+        let mut values = vec![T::zero(); n * n];
+        for i in 0..n {
+            values[i * n + i] = diag[i];
+        }
+        Self {
+            rows: n,
+            cols: n,
+            values,
+            col_major,
+        }
+    }
+
     pub fn rows(&self) -> usize {
         self.rows
     }
@@ -98,6 +115,10 @@ impl<T> Mat<T> {
 
     pub fn col_major(&self) -> bool {
         self.col_major
+    }
+
+    pub fn values_vec(self) -> Vec<T> {
+        self.values
     }
 
     pub fn get_ref(&self, row: usize, col: usize) -> &T {
@@ -179,17 +200,31 @@ impl<T> Mat<T> {
     pub fn row_iter(&self) -> impl Iterator<Item = &'_ [T]> {
         assert!(!self.col_major);
         assert_eq!(self.values.len() % self.cols, 0);
-        self.values.chunks(self.cols)
+        self.values.chunks_exact(self.cols)
     }
 
     /// Panics if not in column-major order.
     pub fn col_iter(&self) -> impl Iterator<Item = &'_ [T]> {
         assert!(self.col_major);
         assert_eq!(self.values.len() % self.rows, 0);
-        self.values.chunks(self.rows)
+        self.values.chunks_exact(self.rows)
     }
 
-    pub fn select_rows(&self, rows: &[usize]) -> Self
+    /// Panics if not in row-major order.
+    pub fn row_iter_mut(&mut self) -> impl Iterator<Item = &'_ mut [T]> {
+        assert!(!self.col_major);
+        assert_eq!(self.values.len() % self.cols, 0);
+        self.values.chunks_exact_mut(self.cols)
+    }
+
+    /// Panics if not in column-major order.
+    pub fn col_iter_mut(&mut self) -> impl Iterator<Item = &'_ mut [T]> {
+        assert!(self.col_major);
+        assert_eq!(self.values.len() % self.rows, 0);
+        self.values.chunks_exact_mut(self.rows)
+    }
+
+    pub fn select_rows(&self, rows: &[usize], col_major: bool) -> Self
     where
         T: Clone,
     {
@@ -203,21 +238,40 @@ impl<T> Mat<T> {
             rows: rows.len(),
             cols: self.cols,
             values: data,
-            col_major: false,
+            col_major,
         }
     }
 
-    // pub fn select(&self, rows: Option<&[usize]>, cols: Option<&[usize]>) -> Self {
-    //     if self.col_major {
-    //     } else {
-    //     }
-    //     Self {
-    //         rows: 0,
-    //         cols: 0,
-    //         data: vec![],
-    //         col_major: false,
-    //     }
-    // }
+    pub fn select_cols(&self, cols: &[usize]) -> Self
+    where
+        T: Clone + Copy,
+    {
+        let mut values = Vec::with_capacity(self.rows * cols.len());
+        if self.col_major {
+            for &c in cols {
+                for r in 0..self.rows {
+                    values.push(*self.get_ref(r, c));
+                }
+            }
+        } else {
+            for r in 0..self.rows {
+                for &c in cols {
+                    values.push(*self.get_ref(r, c));
+                }
+            }
+        }
+        Self {
+            rows: self.rows,
+            cols: cols.len(),
+            values,
+            col_major: self.col_major,
+        }
+    }
+
+    pub fn diagonal(&self) -> impl Iterator<Item = &T> {
+        assert_eq!(self.rows, self.cols);
+        (0..self.rows).map(move |i| self.get_ref(i, i))
+    }
 
     pub fn mat_vec(&self, b: &[T]) -> Vec<T>
     where
